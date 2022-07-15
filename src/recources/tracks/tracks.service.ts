@@ -1,26 +1,75 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/track.entity';
+import { v4 as uuidv4, validate } from 'uuid';
+import { ArtistsService } from '../artists/artists.service';
 
 @Injectable()
 export class TracksService {
-  create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+  private static tracks: Track[] = [];
+
+  findAll(): Track[] {
+    return TracksService.tracks;
   }
 
-  findAll() {
-    return `This action returns all tracks`;
+  findOne(id: string): Track {
+    const track = TracksService.tracks.find((elem: Track) => elem.id === id);
+
+    if (!validate(id)) {
+      throw new BadRequestException('This id is invalid')
+    }
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+
+    return track;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  create(createTrackDto: CreateTrackDto): Track {
+    const id = uuidv4();
+
+    const { name, artistId, albumId, duration } = createTrackDto;
+
+    if(name == null || artistId == null || albumId == null || id  == null ) {
+      throw new BadRequestException('Body does not contain required fields')
+    }
+
+    const newTrack = { id, name, artistId, albumId, duration }
+
+    TracksService.tracks.push(newTrack);
+
+    return newTrack;
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  update(id: string, updateTrackDto: UpdateTrackDto): Track {
+    const track = TracksService.tracks.find((elem: Track) => elem.id === id);
+
+    if (!validate(id)) {
+      throw new BadRequestException('This id is invalid');
+    }
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+
+    const updateTrack = {
+      id,
+      ...updateTrackDto
+    }
+
+    return updateTrack;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  remove(id: string) {
+    const trackIndex = TracksService.tracks.findIndex((elem: Track) => elem.id === id);
+
+    if (!validate(id)) {
+      throw new BadRequestException('This id is invalid');
+    }
+    if (trackIndex < 0) {
+      throw new NotFoundException('User not found');
+    }
+
+    TracksService.tracks.splice(trackIndex, 1)
   }
 }

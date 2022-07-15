@@ -6,14 +6,14 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  private static users: User[] = [];
 
   findAll(): User[] {
-    return this.users;
+    return UsersService.users;
   }
 
   findOne(id: string): User {
-    const user = this.users.find((elem: User) => elem.id === id);
+    const user = UsersService.users.find((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid')
@@ -40,13 +40,13 @@ export class UsersService {
       updatedAt
     }
 
-    this.users.push({password, ...newUser});
+    UsersService.users.push({password, ...newUser});
 
     return newUser;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    const user = this.users.find((elem: User) => elem.id === id);
+    const user = UsersService.users.find((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid');
@@ -74,7 +74,7 @@ export class UsersService {
   }
 
   remove(id: string) {
-    const userIndex = this.users.findIndex((elem: User) => elem.id === id);
+    const userIndex = UsersService.users.findIndex((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid');
@@ -83,7 +83,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    this.users.splice(userIndex, 1)
+    UsersService.users.splice(userIndex, 1)
 
     return [];
   }
