@@ -42,6 +42,7 @@ export class ArtistsService {
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
     const artist = ArtistsService.artists.find((elem: Artist) => elem.id === id);
+    const { name, grammy } = updateArtistDto;
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid');
@@ -50,8 +51,8 @@ export class ArtistsService {
       throw new NotFoundException('User not found');
     }
 
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+    artist.name = name;
+    artist.grammy = grammy;
 
     return artist;
   }
