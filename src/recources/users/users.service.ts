@@ -1,15 +1,18 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { v4 as uuidv4, validate } from 'uuid';
+import { v4 as uuidv4, validate, version } from 'uuid';
 import { User } from './entities/user.entity';
 import { InMemoryDb } from 'src/db/in-memory-db';
 
 @Injectable()
 export class UsersService {
-
   constructor(private inMemoryDb: InMemoryDb) {}
-  // private static users: User[] = [];
 
   findAll() {
     return this.inMemoryDb.users;
@@ -18,8 +21,8 @@ export class UsersService {
   findOne(id: string): User {
     const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
 
-    if (!validate(id)) {
-      throw new BadRequestException('This id is invalid')
+    if (!validate(id) || version(id) !== 4) {
+      throw new BadRequestException('This id is invalid');
     }
     if (!user) {
       throw new NotFoundException('User not found');
@@ -40,10 +43,10 @@ export class UsersService {
       login,
       version,
       createdAt,
-      updatedAt
-    }
+      updatedAt,
+    };
 
-    this.inMemoryDb.users.push({password, ...newUser});
+    this.inMemoryDb.users.push({ password, ...newUser });
 
     return newUser;
   }
@@ -51,7 +54,7 @@ export class UsersService {
   update(id: string, updateUserDto: UpdateUserDto) {
     const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
 
-    if (!validate(id)) {
+    if (!validate(id) || version(id) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
     if (!user) {
@@ -62,7 +65,7 @@ export class UsersService {
     }
 
     user.version += 1;
-    user.updatedAt = Date.now()
+    user.updatedAt = Date.now();
     user.password = updateUserDto.newPassword;
 
     const updateUser = {
@@ -70,24 +73,26 @@ export class UsersService {
       login: user.login,
       version: user.version,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     };
 
     return updateUser;
   }
 
   remove(id: string) {
-    const userIndex = this.inMemoryDb.users.findIndex((elem: User) => elem.id === id);
+    const userIndex = this.inMemoryDb.users.findIndex(
+      (elem: User) => elem.id === id,
+    );
 
-    if (!validate(id)) {
+    if (!validate(id) || version(id) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
     if (userIndex < 0) {
       throw new NotFoundException('User not found');
     }
 
-    this.inMemoryDb.users.splice(userIndex, 1)
+    this.inMemoryDb.users.splice(userIndex, 1);
 
-    return [];
+    return;
   }
 }

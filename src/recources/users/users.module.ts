@@ -5,6 +5,6 @@ import { InMemoryDb } from 'src/db/in-memory-db';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, InMemoryDb]
+  providers: [UsersService, InMemoryDb],
 })
 export class UsersModule {}

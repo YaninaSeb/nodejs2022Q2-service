@@ -1,34 +1,61 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
 
-@Controller('favorites')
+@Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Post()
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoritesService.create(createFavoriteDto);
-  }
-
   @Get()
+  @HttpCode(200)
   findAll() {
     return this.favoritesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favoritesService.findOne(+id);
+  //Track
+  @Post('track/:id')
+  @HttpCode(201)
+  addTrack(@Param('id') id: string) {
+    return this.favoritesService.addTrack(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavoriteDto: UpdateFavoriteDto) {
-    return this.favoritesService.update(+id, updateFavoriteDto);
+  @Delete('track/:id')
+  @HttpCode(204)
+  removeTrack(@Param('id') id: string) {
+    return this.favoritesService.removeTrack(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favoritesService.remove(+id);
+  //Album
+  @Post('album/:id')
+  @HttpCode(201)
+  addAlbum(@Param('id') id: string) {
+    return this.favoritesService.addAlbum(id);
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  removeAlbum(@Param('id') id: string) {
+    return this.favoritesService.removeAlbum(id);
+  }
+
+  //Artist
+  @Post('artist/:id')
+  @HttpCode(201)
+  addArtist(@Param('id') id: string) {
+    return this.favoritesService.addArtist(id);
+  }
+
+  @Delete('artist/:id')
+  @HttpCode(204)
+  removeArtist(@Param('id') id: string) {
+    return this.favoritesService.removeArtist(id);
   }
 }

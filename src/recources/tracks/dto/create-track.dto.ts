@@ -1,20 +1,17 @@
-import { Optional } from "@nestjs/common";
-import { IsEmpty, IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTrackDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsUUID(4)
-    @IsNotEmpty()
-    artistId: string;
+  @IsOptional()
+  artistId: string;
 
-    @IsUUID(4)
-    @IsNotEmpty()
-    albumId: string;
+  @IsOptional()
+  albumId: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    duration: number;
+  @IsNumber()
+  @IsNotEmpty()
+  duration: number;
 }
