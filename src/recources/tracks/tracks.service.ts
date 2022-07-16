@@ -31,10 +31,6 @@ export class TracksService {
 
     const { name, artistId, albumId, duration } = createTrackDto;
 
-    if(name == null || artistId == null || albumId == null || id  == null ) {
-      throw new BadRequestException('Body does not contain required fields')
-    }
-
     const newTrack = { id, name, artistId, albumId, duration }
 
     TracksService.tracks.push(newTrack);

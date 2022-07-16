@@ -3,17 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4, validate } from 'uuid';
 import { User } from './entities/user.entity';
+import { InMemoryDb } from 'src/db/in-memory-db';
 
 @Injectable()
 export class UsersService {
-  private static users: User[] = [];
 
-  findAll(): User[] {
-    return UsersService.users;
+  constructor(private inMemoryDb: InMemoryDb) {}
+  // private static users: User[] = [];
+
+  findAll() {
+    return this.inMemoryDb.users;
   }
 
   findOne(id: string): User {
-    const user = UsersService.users.find((elem: User) => elem.id === id);
+    const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid')
@@ -40,13 +43,13 @@ export class UsersService {
       updatedAt
     }
 
-    UsersService.users.push({password, ...newUser});
+    this.inMemoryDb.users.push({password, ...newUser});
 
     return newUser;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    const user = UsersService.users.find((elem: User) => elem.id === id);
+    const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid');
@@ -74,7 +77,7 @@ export class UsersService {
   }
 
   remove(id: string) {
-    const userIndex = UsersService.users.findIndex((elem: User) => elem.id === id);
+    const userIndex = this.inMemoryDb.users.findIndex((elem: User) => elem.id === id);
 
     if (!validate(id)) {
       throw new BadRequestException('This id is invalid');
@@ -83,7 +86,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    UsersService.users.splice(userIndex, 1)
+    this.inMemoryDb.users.splice(userIndex, 1)
 
     return [];
   }
