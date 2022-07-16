@@ -76,20 +76,25 @@ export class ArtistsService {
 
     this.inMemoryDb.artists.splice(artistIndex, 1);
 
-    const artistInTrackIndex = this.inMemoryDb.tracks.findIndex((elem: Track) => elem.artistId === id);
+    const artistInTrackIndex = this.inMemoryDb.tracks.findIndex(
+      (elem: Track) => elem.artistId === id,
+    );
     if (artistInTrackIndex > -1) {
       this.inMemoryDb.tracks[artistInTrackIndex].artistId = null;
     }
 
-    const artistInAlbumIndex = this.inMemoryDb.albums.findIndex((elem: Album) => elem.artistId === id);
+    const artistInAlbumIndex = this.inMemoryDb.albums.findIndex(
+      (elem: Album) => elem.artistId === id,
+    );
     if (artistInAlbumIndex > -1) {
       this.inMemoryDb.albums[artistInAlbumIndex].artistId = null;
     }
 
-    const artistInAFavsIndex = this.inMemoryDb.favorites.artists.findIndex((artistId: string) => artistId === id);
+    const artistInAFavsIndex = this.inMemoryDb.favorites.artists.findIndex(
+      (artistId: string) => artistId === id,
+    );
     if (artistInAFavsIndex > -1) {
       this.inMemoryDb.favorites.artists.splice(artistInAFavsIndex, 1);
     }
-  
   }
 }

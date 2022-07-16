@@ -74,12 +74,16 @@ export class AlbumsService {
 
     this.inMemoryDb.albums.splice(albumIndex, 1);
 
-    const albumsInTrackIndex = this.inMemoryDb.tracks.findIndex((elem: Track) => elem.albumId === id);
+    const albumsInTrackIndex = this.inMemoryDb.tracks.findIndex(
+      (elem: Track) => elem.albumId === id,
+    );
     if (albumsInTrackIndex > -1) {
       this.inMemoryDb.tracks[albumsInTrackIndex].albumId = null;
     }
 
-    const albumInAFavsIndex = this.inMemoryDb.favorites.albums.findIndex((albumId: string) => albumId === id);
+    const albumInAFavsIndex = this.inMemoryDb.favorites.albums.findIndex(
+      (albumId: string) => albumId === id,
+    );
     if (albumInAFavsIndex > -1) {
       this.inMemoryDb.favorites.albums.splice(albumInAFavsIndex, 1);
     }

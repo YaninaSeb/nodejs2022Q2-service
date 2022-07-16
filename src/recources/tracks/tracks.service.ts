@@ -73,7 +73,9 @@ export class TracksService {
 
     this.inMemoryDb.tracks.splice(trackIndex, 1);
 
-    const trackInAFavsIndex = this.inMemoryDb.favorites.tracks.findIndex((trackId: string) => trackId === id);
+    const trackInAFavsIndex = this.inMemoryDb.favorites.tracks.findIndex(
+      (trackId: string) => trackId === id,
+    );
     if (trackInAFavsIndex > -1) {
       this.inMemoryDb.favorites.tracks.splice(trackInAFavsIndex, 1);
     }
