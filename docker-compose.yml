@@ -1,0 +1,33 @@
+version: "3.9"  # optional since v1.27.0
+
+services:
+  app:
+    container_name: docker-app
+    image: docker-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/app
+    environment:
+      - PORT=${PORT}
+    # depends_on:
+    #   - db
+
+  # db:
+  #   image: docker-db
+  #   container_name: docker-db
+  #   build:
+  #     context: .
+  #     dockerfile: ./database/Dockerfile
+  #   ports:
+  #     - ${POSTGRES_PORT}:${POSTGRES_PORT}
+  #   environment:
+  #     # - POSTGRES_PORT=${POSTGRES_PORT}
+
+
+# volumes:
+#   logs:
+#   db:

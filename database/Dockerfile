@@ -1,0 +1,3 @@
+FROM node:16.15-alpine
+
+EXPOSE ${POSTGRES_PORT}
