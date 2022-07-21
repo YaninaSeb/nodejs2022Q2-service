@@ -1,14 +1,18 @@
 # REST service: Containerization, Docker
 
-## Downloading
+## Install and use with Docker Compose
+
+Clone  repository
 
 ```
 git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
 ```
 
+Switch to  branch 
 
-
-## Running application (using Docker)
+```
+containerization
+```
 
 Build image and start container
 
@@ -26,44 +30,49 @@ npm run docker:scan:app
 npm run docker:scan:db
 ```
 
-## Remote docker images (in DokerHub)
 
-Rest service
-
-```
-docker pull
-```
-
-Database
+Testing
 
 ```
-docker pull
+docker container exec docker-app npm run test
 ```
 
 
-## Testing
+## Install and use local
 
-After application running open new terminal and enter:
+Clone  repository
 
-To run all tests
+```
+git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
+```
+
+Switch to  branch 
+
+```
+containerization
+```
+
+Install dependencies
+
+```
+npm install
+```
+
+Start REST service
+
+```
+npm run start:dev
+```
+
+Testing
 
 ```
 npm run test
 ```
 
-To run only one of all test suites
 
-```
-npm run test -- <path to suite>
-```
+### Application starts on port 4000 by default   
 
 
-## Auto-fix and format
+### After starting the app you can open in your browser OpenAPI documentation by typing ```http://localhost:4000/doc/```
 
-```
-npm run lint
-```
-
-```
-npm run format
-```
