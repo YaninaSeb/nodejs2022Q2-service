@@ -1,3 +1,1 @@
-FROM node:16.15-alpine
-
-EXPOSE ${POSTGRES_PORT}
+FROM postgres:14.4-alpine

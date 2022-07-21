@@ -1,4 +1,4 @@
-# Home Library Service
+# REST service: Containerization, Docker
 
 ## Downloading
 
@@ -6,26 +6,46 @@
 git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
 ```
 
-## Installing NPM modules
+
+
+## Running application (using Docker)
+
+Build image and start container
 
 ```
-npm install
+npm run docker
 ```
 
-## Running application
+
+Scanning images
 
 ```
-npm start
+npm run docker:scan:app
+```
+```
+npm run docker:scan:db
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+## Remote docker images (in DokerHub)
+
+Rest service
+
+```
+docker pull
+```
+
+Database
+
+```
+docker pull
+```
+
 
 ## Testing
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all tests
 
 ```
 npm run test
@@ -38,7 +58,7 @@ npm run test -- <path to suite>
 ```
 
 
-### Auto-fix and format
+## Auto-fix and format
 
 ```
 npm run lint

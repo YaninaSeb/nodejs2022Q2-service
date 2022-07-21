@@ -1,4 +1,4 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.9"
 
 services:
   app:
@@ -7,27 +7,45 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      - docker-custom-net
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - .:/app
+      - app_logs:/usr/src/app
+      - /usr/src/app/node_modules
     environment:
-      - PORT=${PORT}
-    # depends_on:
-    #   - db
+      PORT: ${PORT}
+    restart: unless-stopped
+    depends_on:
+      - db
 
-  # db:
-  #   image: docker-db
-  #   container_name: docker-db
-  #   build:
-  #     context: .
-  #     dockerfile: ./database/Dockerfile
-  #   ports:
-  #     - ${POSTGRES_PORT}:${POSTGRES_PORT}
-  #   environment:
-  #     # - POSTGRES_PORT=${POSTGRES_PORT}
+  db:
+    container_name: docker-db
+    image: docker-db
+    build:
+      context: .
+      dockerfile: ./database/Dockerfile
+    networks:
+      - docker-custom-net
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PG_DATA: ${PG_DATA}
+    volumes:
+      - postgress_db:/var/lib/postgresql/data
+    restart: unless-stopped
 
 
-# volumes:
-#   logs:
-#   db:
+volumes:
+  postgress_db:
+  app_logs:
+
+networks:
+  docker-custom-net:
+    name: docker-custom-net
+    driver: bridge
+
