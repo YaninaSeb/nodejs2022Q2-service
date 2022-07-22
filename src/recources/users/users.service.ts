@@ -7,23 +7,30 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4, validate, version } from 'uuid';
-import { User } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { InMemoryDb } from 'src/db/in-memory-db';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private inMemoryDb: InMemoryDb) {}
+  constructor(
+    // private inMemoryDb: InMemoryDb
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>
+  ) {}
 
-  findAll() {
-    return this.inMemoryDb.users;
+  async findAll() {
+    return await this.userRepository.find();
   }
 
-  findOne(id: string): User {
-    const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async findOne(userId: string) {
+    if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const user = await this.userRepository.findOne( { where: { id: userId }});
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -31,7 +38,7 @@ export class UsersService {
     return user;
   }
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const id = uuidv4();
     const { login, password } = createUserDto;
     const version = 1;
@@ -46,17 +53,20 @@ export class UsersService {
       updatedAt,
     };
 
-    this.inMemoryDb.users.push({ password, ...newUser });
+    const user = await this.userRepository.create({...newUser, password});
 
-    return newUser;
+    await this.userRepository.save(user);
+
+    return await user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const user = this.inMemoryDb.users.find((elem: User) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async update(userId: string, updateUserDto: UpdateUserDto) {
+    if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const user = await this.userRepository.findOne( { where: { id: userId }});
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -76,23 +86,20 @@ export class UsersService {
       updatedAt: user.updatedAt,
     };
 
+    await this.userRepository.save(updateUser);
+
     return updateUser;
   }
 
-  remove(id: string) {
-    const userIndex = this.inMemoryDb.users.findIndex(
-      (elem: User) => elem.id === id,
-    );
-
-    if (!validate(id) || version(id) !== 4) {
+  async remove(userId: string) {
+    if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
-    if (userIndex < 0) {
+
+    const deleteResponse = await this.userRepository.delete(userId);
+
+    if (!deleteResponse.affected) {
       throw new NotFoundException('User not found');
     }
-
-    this.inMemoryDb.users.splice(userIndex, 1);
-
-    return;
   }
 }
