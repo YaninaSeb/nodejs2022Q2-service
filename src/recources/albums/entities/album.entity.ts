@@ -1,6 +1,16 @@
-export class Album {
-  id: string; // uuid v4
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity('album')
+export class AlbumEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
   name: string;
+
+  @Column()
   year: number;
-  artistId: string | null; // refers to Artist
+
+  @Column( { nullable: true } )
+  artistId: string;
 }

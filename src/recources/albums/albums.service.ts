@@ -1,31 +1,36 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { Album } from './entities/album.entity';
+import { AlbumEntity } from './entities/album.entity';
 import { v4 as uuidv4, validate, version } from 'uuid';
 import { InMemoryDb } from 'src/db/in-memory-db';
-import { Artist } from '../artists/entities/artist.entity';
-import { Track } from '../tracks/entities/track.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+// import { Artist } from '../artists/entities/artist.entity';
+// import { Track } from '../tracks/entities/track.entity';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private inMemoryDb: InMemoryDb) {}
+  constructor(
+    @InjectRepository(AlbumEntity)
+    private albumRepository: Repository<AlbumEntity>
+  ) {}
 
-  findAll() {
-    return this.inMemoryDb.albums;
+  async findAll() {
+    return await this.albumRepository.find();
   }
 
-  findOne(id: string) {
-    const album = this.inMemoryDb.albums.find((elem: Album) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async findOne(albumId: string) {
+    if (!validate(albumId) || version(albumId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const album =  await this.albumRepository.findOne( { where: { id: albumId } } );
+
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -33,22 +38,23 @@ export class AlbumsService {
     return album;
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
+  async create(createAlbumDto: CreateAlbumDto) {
     const id = uuidv4();
 
     const newAlbum = { id, ...createAlbumDto };
 
-    this.inMemoryDb.albums.push(newAlbum);
+    await this.albumRepository.save(newAlbum);
 
     return newAlbum;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.inMemoryDb.albums.find((elem: Album) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async update(albumId: string, updateAlbumDto: UpdateAlbumDto) {
+    if (!validate(albumId) || version(albumId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const album =  await this.albumRepository.findOne( { where: { id: albumId } } );
+
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -57,37 +63,37 @@ export class AlbumsService {
     album.year = updateAlbumDto.year;
     album.artistId = updateAlbumDto.artistId;
 
+    await this.albumRepository.save(album);
+
     return album;
   }
 
-  remove(id: string) {
-    const albumIndex = this.inMemoryDb.albums.findIndex(
-      (elem: Album) => elem.id === id,
-    );
-
-    if (!validate(id) || version(id) !== 4) {
+  async remove(albumId: string) {
+    if (!validate(albumId) || version(albumId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
-    if (albumIndex < 0) {
+
+    const deleteResponse = await this.albumRepository.delete(albumId);
+
+    if (!deleteResponse.affected) {
       throw new NotFoundException('Album not found');
     }
 
-    this.inMemoryDb.albums.splice(albumIndex, 1);
 
-    const albumsInTrackIndex = this.inMemoryDb.tracks.findIndex(
-      (elem: Track) => elem.albumId === id,
-    );
-    if (albumsInTrackIndex > -1) {
-      this.inMemoryDb.tracks[albumsInTrackIndex].albumId = null;
-    }
+    // const albumsInTrackIndex = this.inMemoryDb.tracks.findIndex(
+    //   (elem: Track) => elem.albumId === id,
+    // );
+    // if (albumsInTrackIndex > -1) {
+    //   this.inMemoryDb.tracks[albumsInTrackIndex].albumId = null;
+    // }
 
-    const albumInAFavsIndex = this.inMemoryDb.favorites.albums.findIndex(
-      (albumId: string) => albumId === id,
-    );
-    if (albumInAFavsIndex > -1) {
-      this.inMemoryDb.favorites.albums.splice(albumInAFavsIndex, 1);
-    }
+    // const albumInAFavsIndex = this.inMemoryDb.favorites.albums.findIndex(
+    //   (albumId: string) => albumId === id,
+    // );
+    // if (albumInAFavsIndex > -1) {
+    //   this.inMemoryDb.favorites.albums.splice(albumInAFavsIndex, 1);
+    // }
 
-    return;
+    // return;
   }
 }

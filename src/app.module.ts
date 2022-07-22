@@ -16,9 +16,9 @@ import configService from './ormconfig';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(configService),
     UsersModule,
-    // ArtistsModule,
-    // TracksModule,
-    // AlbumsModule,
+    ArtistsModule,
+    TracksModule,
+    AlbumsModule,
     // FavoritesModule
   ],
   controllers: [AppController],

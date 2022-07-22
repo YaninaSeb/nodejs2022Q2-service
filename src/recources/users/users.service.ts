@@ -15,7 +15,6 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class UsersService {
   constructor(
-    // private inMemoryDb: InMemoryDb
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>
   ) {}
@@ -29,7 +28,7 @@ export class UsersService {
       throw new BadRequestException('This id is invalid');
     }
 
-    const user = await this.userRepository.findOne( { where: { id: userId }});
+    const user = await this.userRepository.findOne( { where: { id: userId } } );
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -55,9 +54,9 @@ export class UsersService {
 
     const user = await this.userRepository.create({...newUser, password});
 
-    await this.userRepository.save(user);
+    await this.userRepository.save({...newUser, password});
 
-    return await user;
+    return {...newUser};
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto) {

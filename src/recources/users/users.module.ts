@@ -6,7 +6,7 @@ import { InMemoryDb } from 'src/db/in-memory-db';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity])],
   controllers: [UsersController],
   providers: [UsersService, InMemoryDb],
 })

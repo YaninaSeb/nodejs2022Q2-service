@@ -6,24 +6,30 @@ import {
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from './entities/track.entity';
+import { TrackEntity } from './entities/track.entity';
 import { v4 as uuidv4, validate, version } from 'uuid';
 import { InMemoryDb } from 'src/db/in-memory-db';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TracksService {
-  constructor(private inMemoryDb: InMemoryDb) {}
+  constructor(
+    @InjectRepository(TrackEntity)
+    private trackRepository: Repository<TrackEntity>
+  ) {}
 
-  findAll(): Track[] {
-    return this.inMemoryDb.tracks;
+  async findAll() {
+    return await this.trackRepository.find();
   }
 
-  findOne(id: string): Track {
-    const track = this.inMemoryDb.tracks.find((elem: Track) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async findOne(trackId: string) {
+    if (!validate(trackId) || version(trackId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const track = await this.trackRepository.findOne( { where: { id: trackId } } );
+
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -31,22 +37,23 @@ export class TracksService {
     return track;
   }
 
-  create(createTrackDto: CreateTrackDto): Track {
+  async create(createTrackDto: CreateTrackDto) {
     const id = uuidv4();
 
     const newTrack = { id, ...createTrackDto };
 
-    this.inMemoryDb.tracks.push(newTrack);
+    await this.trackRepository.save(newTrack);
 
     return newTrack;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.inMemoryDb.tracks.find((elem: Track) => elem.id === id);
-
-    if (!validate(id) || version(id) !== 4) {
+  async update(trackId: string, updateTrackDto: UpdateTrackDto) {
+    if (!validate(trackId) || version(trackId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
+
+    const track = await this.trackRepository.findOne( { where: { id: trackId } } );
+
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -56,30 +63,29 @@ export class TracksService {
     track.albumId = updateTrackDto.albumId;
     track.duration = updateTrackDto.duration;
 
+    await this.trackRepository.save(track);
+
     return track;
   }
 
-  remove(id: string) {
-    const trackIndex = this.inMemoryDb.tracks.findIndex(
-      (elem: Track) => elem.id === id,
-    );
-
-    if (!validate(id) || version(id) !== 4) {
+  async remove(trackId: string) {
+    if (!validate(trackId) || version(trackId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
-    if (trackIndex < 0) {
+
+    const deleteResponse = await this.trackRepository.delete(trackId);
+
+    if (!deleteResponse.affected) {
       throw new NotFoundException('Track not found');
     }
 
-    this.inMemoryDb.tracks.splice(trackIndex, 1);
+    // const trackInAFavsIndex = this.inMemoryDb.favorites.tracks.findIndex(
+    //   (trackId: string) => trackId === id,
+    // );
+    // if (trackInAFavsIndex > -1) {
+    //   this.inMemoryDb.favorites.tracks.splice(trackInAFavsIndex, 1);
+    // }
 
-    const trackInAFavsIndex = this.inMemoryDb.favorites.tracks.findIndex(
-      (trackId: string) => trackId === id,
-    );
-    if (trackInAFavsIndex > -1) {
-      this.inMemoryDb.favorites.tracks.splice(trackInAFavsIndex, 1);
-    }
-
-    return;
+    // return;
   }
 }
