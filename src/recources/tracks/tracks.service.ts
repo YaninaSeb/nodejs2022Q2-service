@@ -8,7 +8,6 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackEntity } from './entities/track.entity';
 import { v4 as uuidv4, validate, version } from 'uuid';
-import { InMemoryDb } from 'src/db/in-memory-db';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -19,11 +18,11 @@ export class TracksService {
     private trackRepository: Repository<TrackEntity>
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<TrackEntity[]> {
     return await this.trackRepository.find();
   }
 
-  async findOne(trackId: string) {
+  async findOne(trackId: string): Promise<TrackEntity> {
     if (!validate(trackId) || version(trackId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -37,35 +36,28 @@ export class TracksService {
     return track;
   }
 
-  async create(createTrackDto: CreateTrackDto) {
-    const id = uuidv4();
-
-    const newTrack = { id, ...createTrackDto };
-
-    await this.trackRepository.save(newTrack);
-
-    return newTrack;
-  }
-
-  async update(trackId: string, updateTrackDto: UpdateTrackDto) {
-    if (!validate(trackId) || version(trackId) !== 4) {
-      throw new BadRequestException('This id is invalid');
-    }
-
-    const track = await this.trackRepository.findOne( { where: { id: trackId } } );
-
-    if (!track) {
-      throw new NotFoundException('Track not found');
-    }
-
-    track.name = updateTrackDto.name;
-    track.artistId = updateTrackDto.artistId;
-    track.albumId = updateTrackDto.albumId;
-    track.duration = updateTrackDto.duration;
+  async create(createTrackDto: CreateTrackDto): Promise<TrackEntity> {
+    const track = await this.trackRepository.create({...createTrackDto});
 
     await this.trackRepository.save(track);
 
     return track;
+  }
+
+  async update(trackId: string, updateTrackDto: UpdateTrackDto): Promise<TrackEntity> {
+    if (!validate(trackId) || version(trackId) !== 4) {
+      throw new BadRequestException('This id is invalid');
+    }
+
+    const track = await this.trackRepository.findOne( { where: { id: trackId } } );
+
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+
+    const id = track.id;
+
+    return await this.trackRepository.save({id, ...updateTrackDto});
   }
 
   async remove(trackId: string) {

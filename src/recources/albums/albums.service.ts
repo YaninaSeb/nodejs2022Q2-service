@@ -6,12 +6,9 @@ import {
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumEntity } from './entities/album.entity';
-import { v4 as uuidv4, validate, version } from 'uuid';
-import { InMemoryDb } from 'src/db/in-memory-db';
+import { validate, version } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { Artist } from '../artists/entities/artist.entity';
-// import { Track } from '../tracks/entities/track.entity';
 
 @Injectable()
 export class AlbumsService {
@@ -20,11 +17,11 @@ export class AlbumsService {
     private albumRepository: Repository<AlbumEntity>
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<AlbumEntity[]> {
     return await this.albumRepository.find();
   }
 
-  async findOne(albumId: string) {
+  async findOne(albumId: string): Promise<AlbumEntity> {
     if (!validate(albumId) || version(albumId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -38,34 +35,28 @@ export class AlbumsService {
     return album;
   }
 
-  async create(createAlbumDto: CreateAlbumDto) {
-    const id = uuidv4();
-
-    const newAlbum = { id, ...createAlbumDto };
-
-    await this.albumRepository.save(newAlbum);
-
-    return newAlbum;
-  }
-
-  async update(albumId: string, updateAlbumDto: UpdateAlbumDto) {
-    if (!validate(albumId) || version(albumId) !== 4) {
-      throw new BadRequestException('This id is invalid');
-    }
-
-    const album =  await this.albumRepository.findOne( { where: { id: albumId } } );
-
-    if (!album) {
-      throw new NotFoundException('Album not found');
-    }
-
-    album.name = updateAlbumDto.name;
-    album.year = updateAlbumDto.year;
-    album.artistId = updateAlbumDto.artistId;
+  async create(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
+    const album = await this.albumRepository.create({...createAlbumDto});
 
     await this.albumRepository.save(album);
 
     return album;
+  }
+
+  async update(albumId: string, updateAlbumDto: UpdateAlbumDto): Promise<AlbumEntity> {
+    if (!validate(albumId) || version(albumId) !== 4) {
+      throw new BadRequestException('This id is invalid');
+    }
+
+    const album =  await this.albumRepository.findOne( { where: { id: albumId } } );
+
+    if (!album) {
+      throw new NotFoundException('Album not found');
+    }
+
+    const id = album.id;
+
+    return await this.albumRepository.save({id, ...updateAlbumDto});
   }
 
   async remove(albumId: string) {

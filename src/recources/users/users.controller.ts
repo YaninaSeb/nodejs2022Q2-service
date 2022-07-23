@@ -20,8 +20,7 @@ export class UsersController {
   @Get()
   @HttpCode(200)
   findAll() {
-    // return this.usersService.findAll();
-    return [];
+    return this.usersService.findAll();
   }
 
   @Get(':id')

@@ -6,9 +6,8 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { v4 as uuidv4, validate, version } from 'uuid';
+import { validate, version } from 'uuid';
 import { UserEntity } from './entities/user.entity';
-import { InMemoryDb } from 'src/db/in-memory-db';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -19,11 +18,11 @@ export class UsersService {
     private userRepository: Repository<UserEntity>
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<UserEntity[]> {
     return await this.userRepository.find();
   }
 
-  async findOne(userId: string) {
+  async findOne(userId: string): Promise<UserEntity> {
     if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -37,29 +36,15 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto) {
-    const id = uuidv4();
-    const { login, password } = createUserDto;
-    const version = 1;
-    const createdAt = Date.now();
-    const updatedAt = Date.now();
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    const user = await this.userRepository.create({...createUserDto});
 
-    const newUser = {
-      id,
-      login,
-      version,
-      createdAt,
-      updatedAt,
-    };
+    await this.userRepository.save(user);
 
-    const user = await this.userRepository.create({...newUser, password});
-
-    await this.userRepository.save({...newUser, password});
-
-    return {...newUser};
+    return user; 
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDto) {
+  async update(userId: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
     if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -73,21 +58,11 @@ export class UsersService {
       throw new ForbiddenException('oldPassword is wrong');
     }
 
-    user.version += 1;
-    user.updatedAt = Date.now();
-    user.password = updateUserDto.newPassword;
+    const password = updateUserDto.newPassword;
 
-    const updateUser = {
-      id: user.id,
-      login: user.login,
-      version: user.version,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    Object.assign(user, { password });
 
-    await this.userRepository.save(updateUser);
-
-    return updateUser;
+    return await this.userRepository.save(user);
   }
 
   async remove(userId: string) {

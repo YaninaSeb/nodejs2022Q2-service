@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude, Transform } from "class-transformer";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
 
 @Entity('user')
 export class UserEntity {
@@ -8,21 +9,23 @@ export class UserEntity {
   @Column()
   login: string;
 
+  @Exclude()
   @Column()
   password: string;
 
-  @Column()
+  @VersionColumn()
   version: number;
 
-  @Column()
+  @CreateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
   createdAt: number;
 
-  @Column()
+  @UpdateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
   updatedAt: number;
 
-  toResponse() {
-    const { id, login, version, createdAt, updatedAt } = this
-    return { id, login, version, createdAt, updatedAt }
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
   }
 
 }

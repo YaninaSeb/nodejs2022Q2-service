@@ -6,11 +6,9 @@ import {
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistEntity } from './entities/artist.entity';
-import { v4 as uuidv4, validate, version } from 'uuid';
-// import { Track } from '../tracks/entities/track.entity';
+import { validate, version } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Album } from '../albums/entities/album.entity';
 
 @Injectable()
 export class ArtistsService {
@@ -19,11 +17,11 @@ export class ArtistsService {
       private artistRepository: Repository<ArtistEntity>
 ) {}
 
-  async findAll() {
+  async findAll(): Promise<ArtistEntity[]> {
     return await this.artistRepository.find();
   }
 
-  async findOne(artistId: string) {
+  async findOne(artistId: string): Promise<ArtistEntity> {
     if (!validate(artistId) || version(artistId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -37,33 +35,29 @@ export class ArtistsService {
     return artist;
   }
 
-  async create(createArtistDto: CreateArtistDto) {
-    const id = uuidv4();
+  async create(createArtistDto: CreateArtistDto): Promise<ArtistEntity> {
 
-    const newArtist = { id, ...createArtistDto };
-
-    await this.artistRepository.save(newArtist);
-
-    return newArtist;
-  }
-
-  async update(artistId: string, updateArtistDto: UpdateArtistDto) {
-    if (!validate(artistId) || version(artistId) !== 4) {
-      throw new BadRequestException('This id is invalid');
-    }
-
-    const artist = await this.artistRepository.findOne( { where: { id: artistId } });
-
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
-
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+    const artist = await this.artistRepository.create({...createArtistDto});
 
     await this.artistRepository.save(artist);
 
     return artist;
+  }
+
+  async update(artistId: string, updateArtistDto: UpdateArtistDto): Promise<ArtistEntity> {
+    if (!validate(artistId) || version(artistId) !== 4) {
+      throw new BadRequestException('This id is invalid');
+    }
+
+    const artist = await this.artistRepository.findOne( { where: { id: artistId } });
+
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
+    }
+
+    const id = artist.id;
+
+    return await this.artistRepository.save({id, ...updateArtistDto});
   }
 
   async remove(artistId: string) {
