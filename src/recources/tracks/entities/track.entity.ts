@@ -25,12 +25,12 @@ export class TrackEntity {
     onDelete: 'SET NULL',
   })
   @Exclude()
-  artist: ArtistEntity 
+  artist: ArtistEntity;
 
   @ManyToOne(() => AlbumEntity, (album) => album.id, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   @Exclude()
-  album: AlbumEntity 
+  album: AlbumEntity; 
 }

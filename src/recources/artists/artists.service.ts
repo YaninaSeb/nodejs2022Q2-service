@@ -37,11 +37,9 @@ export class ArtistsService {
 
   async create(createArtistDto: CreateArtistDto): Promise<ArtistEntity> {
 
-    const artist = await this.artistRepository.create({...createArtistDto});
+    const artist =  this.artistRepository.create({...createArtistDto});
 
-    await this.artistRepository.save(artist);
-
-    return artist;
+    return await this.artistRepository.save(artist);
   }
 
   async update(artistId: string, updateArtistDto: UpdateArtistDto): Promise<ArtistEntity> {
@@ -70,26 +68,5 @@ export class ArtistsService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Artist not found');
     }
-
-    // const artistInTrackIndex = this.inMemoryDb.tracks.findIndex(
-    //   (elem: Track) => elem.artistId === id,
-    // );
-    // if (artistInTrackIndex > -1) {
-    //   this.inMemoryDb.tracks[artistInTrackIndex].artistId = null;
-    // }
-
-    // const artistInAlbumIndex = this.inMemoryDb.albums.findIndex(
-    //   (elem: Album) => elem.artistId === id,
-    // );
-    // if (artistInAlbumIndex > -1) {
-    //   this.inMemoryDb.albums[artistInAlbumIndex].artistId = null;
-    // }
-
-    // const artistInAFavsIndex = this.inMemoryDb.favorites.artists.findIndex(
-    //   (artistId: string) => artistId === id,
-    // );
-    // if (artistInAFavsIndex > -1) {
-    //   this.inMemoryDb.favorites.artists.splice(artistInAFavsIndex, 1);
-    // }
   }
 }

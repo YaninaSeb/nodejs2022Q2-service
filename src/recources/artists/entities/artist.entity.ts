@@ -16,9 +16,9 @@ export class ArtistEntity {
 
   @OneToMany(() => AlbumEntity, (album) => album.artistId)
   @Exclude()
-  albums: AlbumEntity[]
+  albums: AlbumEntity[];
 
   @OneToMany(() => TrackEntity, (track) => track.artistId)
   @Exclude()
-  tracks: TrackEntity[]
+  tracks: TrackEntity[];
 }

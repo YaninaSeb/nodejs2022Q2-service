@@ -18,31 +18,31 @@ export class ArtistsController {
 
   @Get()
   @HttpCode(200)
-  findAll() {
-    return this.artistsService.findAll();
+  async findAll() {
+    return await this.artistsService.findAll();
   }
 
   @Get(':id')
   @HttpCode(200)
-  findOne(@Param('id') id: string) {
-    return this.artistsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.artistsService.findOne(id);
   }
 
   @Post()
   @HttpCode(201)
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistsService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistsService.create(createArtistDto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    return this.artistsService.update(id, updateArtistDto);
+  async update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
+    return await this.artistsService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: string) {
-    return this.artistsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.artistsService.remove(id);
   }
 }

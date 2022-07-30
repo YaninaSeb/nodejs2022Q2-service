@@ -15,7 +15,7 @@ import { Repository } from 'typeorm';
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -37,7 +37,8 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const user = this.userRepository.create({...createUserDto});
+    const newUser = new UserEntity({...createUserDto}) ;
+    const user = this.userRepository.create(newUser);
 
     return await this.userRepository.save(user);
   }
@@ -56,9 +57,7 @@ export class UsersService {
       throw new ForbiddenException('oldPassword is wrong');
     }
 
-    const password = updateUserDto.newPassword;
-
-    Object.assign(user, { password });
+    user.password = updateUserDto.newPassword;
 
     return await this.userRepository.save(user);
   }

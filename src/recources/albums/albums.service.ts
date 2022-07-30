@@ -36,11 +36,9 @@ export class AlbumsService {
   }
 
   async create(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
-    const album = await this.albumRepository.create({...createAlbumDto});
+    const album = this.albumRepository.create({...createAlbumDto});
 
-    await this.albumRepository.save(album);
-
-    return album;
+    return await this.albumRepository.save(album);
   }
 
   async update(albumId: string, updateAlbumDto: UpdateAlbumDto): Promise<AlbumEntity> {
@@ -69,22 +67,5 @@ export class AlbumsService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Album not found');
     }
-
-
-    // const albumsInTrackIndex = this.inMemoryDb.tracks.findIndex(
-    //   (elem: Track) => elem.albumId === id,
-    // );
-    // if (albumsInTrackIndex > -1) {
-    //   this.inMemoryDb.tracks[albumsInTrackIndex].albumId = null;
-    // }
-
-    // const albumInAFavsIndex = this.inMemoryDb.favorites.albums.findIndex(
-    //   (albumId: string) => albumId === id,
-    // );
-    // if (albumInAFavsIndex > -1) {
-    //   this.inMemoryDb.favorites.albums.splice(albumInAFavsIndex, 1);
-    // }
-
-    // return;
   }
 }

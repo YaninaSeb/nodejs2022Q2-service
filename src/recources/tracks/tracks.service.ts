@@ -37,11 +37,9 @@ export class TracksService {
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<TrackEntity> {
-    const track = await this.trackRepository.create({...createTrackDto});
+    const track = this.trackRepository.create({...createTrackDto});
 
-    await this.trackRepository.save(track);
-
-    return track;
+    return await this.trackRepository.save(track);
   }
 
   async update(trackId: string, updateTrackDto: UpdateTrackDto): Promise<TrackEntity> {
@@ -70,14 +68,5 @@ export class TracksService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Track not found');
     }
-
-    // const trackInAFavsIndex = this.inMemoryDb.favorites.tracks.findIndex(
-    //   (trackId: string) => trackId === id,
-    // );
-    // if (trackInAFavsIndex > -1) {
-    //   this.inMemoryDb.favorites.tracks.splice(trackInAFavsIndex, 1);
-    // }
-
-    // return;
   }
 }
