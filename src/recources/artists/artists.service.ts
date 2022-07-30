@@ -15,7 +15,7 @@ export class ArtistsService {
   constructor(
       @InjectRepository(ArtistEntity)
       private artistRepository: Repository<ArtistEntity>
-) {}
+  ) {}
 
   async findAll(): Promise<ArtistEntity[]> {
     return await this.artistRepository.find();

@@ -4,151 +4,126 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 // import { Artist } from '../artists/entities/artist.entity';
 import { v4 as uuidv4, validate, version } from 'uuid';
+import { FavoritesEntity } from './entities/favorite.entity';
 // import { Track } from '../tracks/entities/track.entity';
 // import { Album } from '../albums/entities/album.entity';
 
 @Injectable()
 export class FavoritesService {
-  // constructor(private inMemoryDb: InMemoryDb) {}
+  constructor(
+    @InjectRepository(FavoritesEntity)
+    private favoritesRepository: Repository<FavoritesEntity>
+  ) {}
 
-  // findAll() {
-  //   const arrArtists = [];
-  //   const arrAlbums = [];
-  //   const arrTracks = [];
+  async findAll() {
+    // return await this.favoritesRepository.find();
+  }
 
-  //   this.inMemoryDb.favorites.artists.forEach((artistId: string) => {
-  //     const artist = this.inMemoryDb.artists.find(
-  //       (elem: Artist) => elem.id === artistId,
-  //     );
-  //     arrArtists.push(artist);
-  //   });
+  //Track
 
-  //   this.inMemoryDb.favorites.albums.forEach((albumId: string) => {
-  //     const album = this.inMemoryDb.albums.find(
-  //       (elem: Album) => elem.id === albumId,
-  //     );
-  //     arrAlbums.push(album);
-  //   });
+  addTrack(id: string) {
+    // const track = this.inMemoryDb.tracks.find((elem: Track) => elem.id === id);
 
-  //   this.inMemoryDb.favorites.tracks.forEach((trackId: string) => {
-  //     const track = this.inMemoryDb.tracks.find(
-  //       (elem: Track) => elem.id === trackId,
-  //     );
-  //     arrTracks.push(track);
-  //   });
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (!track) {
+    //   throw new UnprocessableEntityException(
+    //     "Track with this id doesn't exist",
+    //   );
+    // }
 
-  //   const res = {
-  //     artists: arrArtists,
-  //     albums: arrAlbums,
-  //     tracks: arrTracks,
-  //   };
+    // this.inMemoryDb.favorites.tracks.push(id);
+    // return;
+  }
 
-  //   return res;
-  // }
+  removeTrack(id: string) {
+    // const trackIndex = this.inMemoryDb.favorites.tracks.findIndex(
+    //   (elem: string) => elem === id,
+    // );
 
-  // //Track
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (trackIndex < 0) {
+    //   throw new NotFoundException('This track is not favorite');
+    // }
 
-  // addTrack(id: string) {
-  //   const track = this.inMemoryDb.tracks.find((elem: Track) => elem.id === id);
+    // this.inMemoryDb.favorites.tracks.splice(trackIndex, 1);
+    // return;
+  }
 
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (!track) {
-  //     throw new UnprocessableEntityException(
-  //       "Track with this id doesn't exist",
-  //     );
-  //   }
+  //Album
 
-  //   this.inMemoryDb.favorites.tracks.push(id);
-  //   return;
-  // }
+  addAlbum(id: string) {
+    // const album = this.inMemoryDb.albums.find((elem: Album) => elem.id === id);
 
-  // removeTrack(id: string) {
-  //   const trackIndex = this.inMemoryDb.favorites.tracks.findIndex(
-  //     (elem: string) => elem === id,
-  //   );
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (!album) {
+    //   throw new UnprocessableEntityException(
+    //     "Album with this id doesn't exist",
+    //   );
+    // }
 
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (trackIndex < 0) {
-  //     throw new NotFoundException('This track is not favorite');
-  //   }
+    // this.inMemoryDb.favorites.albums.push(id);
+    // return;
+  }
 
-  //   this.inMemoryDb.favorites.tracks.splice(trackIndex, 1);
-  //   return;
-  // }
+  removeAlbum(id: string) {
+    // const albumIndex = this.inMemoryDb.favorites.albums.findIndex(
+    //   (elem: string) => elem === id,
+    // );
 
-  // //Album
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (albumIndex < 0) {
+    //   throw new NotFoundException('This album is not favorite');
+    // }
 
-  // addAlbum(id: string) {
-  //   const album = this.inMemoryDb.albums.find((elem: Album) => elem.id === id);
+    // this.inMemoryDb.favorites.albums.splice(albumIndex, 1);
+    // return;
+  }
 
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (!album) {
-  //     throw new UnprocessableEntityException(
-  //       "Album with this id doesn't exist",
-  //     );
-  //   }
+  //Artist
 
-  //   this.inMemoryDb.favorites.albums.push(id);
-  //   return;
-  // }
+  addArtist(id: string) {
+    // const artist = this.inMemoryDb.artists.find(
+    //   (elem: Artist) => elem.id === id,
+    // );
 
-  // removeAlbum(id: string) {
-  //   const albumIndex = this.inMemoryDb.favorites.albums.findIndex(
-  //     (elem: string) => elem === id,
-  //   );
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (!artist) {
+    //   throw new UnprocessableEntityException(
+    //     "Artist with this id doesn't exist",
+    //   );
+    // }
 
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (albumIndex < 0) {
-  //     throw new NotFoundException('This album is not favorite');
-  //   }
+    // this.inMemoryDb.favorites.artists.push(id);
+    // return;
+  }
 
-  //   this.inMemoryDb.favorites.albums.splice(albumIndex, 1);
-  //   return;
-  // }
+  removeArtist(id: string) {
+    // const artistIndex = this.inMemoryDb.favorites.artists.findIndex(
+    //   (elem: string) => elem === id,
+    // );
 
-  // //Artist
+    // if (!validate(id) || version(id) !== 4) {
+    //   throw new BadRequestException('This id is invalid');
+    // }
+    // if (artistIndex < 0) {
+    //   throw new NotFoundException('This artist is not favorite');
+    // }
 
-  // addArtist(id: string) {
-  //   const artist = this.inMemoryDb.artists.find(
-  //     (elem: Artist) => elem.id === id,
-  //   );
-
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (!artist) {
-  //     throw new UnprocessableEntityException(
-  //       "Artist with this id doesn't exist",
-  //     );
-  //   }
-
-  //   this.inMemoryDb.favorites.artists.push(id);
-  //   return;
-  // }
-
-  // removeArtist(id: string) {
-  //   const artistIndex = this.inMemoryDb.favorites.artists.findIndex(
-  //     (elem: string) => elem === id,
-  //   );
-
-  //   if (!validate(id) || version(id) !== 4) {
-  //     throw new BadRequestException('This id is invalid');
-  //   }
-  //   if (artistIndex < 0) {
-  //     throw new NotFoundException('This artist is not favorite');
-  //   }
-
-  //   this.inMemoryDb.favorites.artists.splice(artistIndex, 1);
-  //   return;
-  // }
+    // this.inMemoryDb.favorites.artists.splice(artistIndex, 1);
+    // return;
+  }
 }
