@@ -21,7 +21,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker": "docker compose up -d --build",
     "docker:scan:app": "docker scan docker-app",
-    "docker:scan:db": "docker scan docker-db"
+    "docker:scan:db": "docker scan docker-db",
+    "typeorm:create": "node ./node_modules/typeorm/cli migration:create ./src/migration/migration",
+    "typeorm:generate": "node -d ./src/ormconfig.ts  migration:generate ./src/migrations/migrations"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

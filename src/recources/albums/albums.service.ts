@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,7 +16,7 @@ import { Repository } from 'typeorm';
 export class AlbumsService {
   constructor(
     @InjectRepository(AlbumEntity)
-    private albumRepository: Repository<AlbumEntity>
+    private albumRepository: Repository<AlbumEntity>,
   ) {}
 
   async findAll(): Promise<AlbumEntity[]> {
@@ -67,5 +69,13 @@ export class AlbumsService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Album not found');
     }
+  }
+
+  async checkAlbum(albumId: string) {
+    const album = await this.albumRepository.findOne( { where: { id: albumId } });
+    if (!album) {
+      return false;
+    }
+    return true;
   }
 }

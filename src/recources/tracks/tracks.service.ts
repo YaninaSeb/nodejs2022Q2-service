@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -68,5 +70,13 @@ export class TracksService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Track not found');
     }
+  }
+
+  async checkTrack(trackId: string) {
+    const track = await this.trackRepository.findOne( { where: { id: trackId } });
+    if (!track) {
+      return false;
+    }
+    return true;
   }
 }

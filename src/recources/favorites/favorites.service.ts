@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -51,20 +49,35 @@ export class FavoritesService {
     const arrAlbums = [];
     const arrTracks = [];
 
-    artists.forEach( async (id: string) => {
-      const elem = await this.artistService.findOne(id);
-      arrArtists.push(elem);
-    });
+    for (const id of artists) {
+      const hasArtist = await this.artistService.checkArtist(id);
+      if (hasArtist) {
+        const elem = await this.artistService.findOne(id);
+        arrArtists.push(elem);
+      } else {
+        this.removeArtist(id);
+      }
+    };
 
-    albums.forEach( async (id: string) => {
-      const elem = await this.albumService.findOne(id);
-      arrAlbums.push(elem);
-    });
+    for (const id of albums) {
+      const hasAlbum = await this.albumService.checkAlbum(id);
+      if (hasAlbum) {
+        const elem = await this.albumService.findOne(id);
+        arrAlbums.push(elem);
+      } else {
+        this.removeAlbum(id);
+      }
+    };
 
-    tracks.forEach( async (id: string) => {
-      const elem = await this.trackService.findOne(id);
-      arrTracks.push(elem);
-    });
+    for (const id of tracks) {
+      const hasTrack = await this.trackService.checkTrack(id);
+      if (hasTrack) {
+        const elem = await this.trackService.findOne(id);
+        arrTracks.push(elem);
+      } else {
+        this.removeTrack(id);
+      }
+    };
 
     return {
       artists: arrArtists,
@@ -80,9 +93,9 @@ export class FavoritesService {
       throw new BadRequestException('This ID is invalid');
     }
 
-    const track = await this.trackService.findOne(id);
+    const hasTrack = await this.trackService.checkTrack(id);
 
-    if (!track) {
+    if (!hasTrack) {
       throw new UnprocessableEntityException(
         "Track with this ID doesn't exist",
       );
@@ -92,7 +105,7 @@ export class FavoritesService {
 
     favorites.tracks.push(id);
 
-    await this.favoritesRepository.save(favorites);
+    return await this.favoritesRepository.save(favorites);
   }
 
   async removeTrack(id: string) {
@@ -122,9 +135,9 @@ export class FavoritesService {
       throw new BadRequestException('This ID is invalid');
     }
 
-    const album = await this.albumService.findOne(id);
+    const hasAlbum = await this.albumService.checkAlbum(id);
     
-    if (!album) {
+    if (!hasAlbum) {
       throw new UnprocessableEntityException(
         "Album with this ID doesn't exist",
       );
@@ -144,7 +157,7 @@ export class FavoritesService {
 
     const favorites = await this.getFavorites();
 
-    const albumIndex = await favorites.albums.findIndex(
+    const albumIndex = favorites.albums.findIndex(
       (elem: string) => elem === id,
     );
 
@@ -164,9 +177,9 @@ export class FavoritesService {
       throw new BadRequestException('This ID is invalid');
     }
 
-    const artist = await this.artistService.findOne(id);
+    const hasArtist = await this.artistService.checkArtist(id);
     
-    if (!artist) {
+    if (!hasArtist) {
       throw new UnprocessableEntityException(
         "Artist with this ID doesn't exist",
       );
@@ -186,7 +199,7 @@ export class FavoritesService {
 
     const favorites = await this.getFavorites();
 
-    const artistIndex = await favorites.artists.findIndex(
+    const artistIndex = favorites.artists.findIndex(
       (elem: string) => elem === id,
     );
 

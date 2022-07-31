@@ -16,15 +16,24 @@ export class UserEntity {
   @VersionColumn()
   version: number;
 
-  @CreateDateColumn()
-  @Transform(({ value }) => new Date(value).getTime())
+  @CreateDateColumn({
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: Date) => value.getTime(),
+    },
+  })
   createdAt: number;
 
-  @UpdateDateColumn()
-  @Transform(({ value }) => new Date(value).getTime())
+  @UpdateDateColumn({
+    transformer: {
+      to: (value: Date) => value,
+      from: (value: Date) => value.getTime(),
+    },
+  })
   updatedAt: number;
 
-  constructor(partial: Partial<UserEntity>) {
-    Object.assign(this, partial);
+  toResponse() {
+    const { id, login, password, version, createdAt, updatedAt } = this;
+    return { id, login, version, createdAt, updatedAt };
   }
 }

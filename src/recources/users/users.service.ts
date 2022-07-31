@@ -36,14 +36,13 @@ export class UsersService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const newUser = new UserEntity({...createUserDto}) ;
-    const user = this.userRepository.create(newUser);
-
-    return await this.userRepository.save(user);
+  async create(createUserDto: CreateUserDto) {
+    const user = this.userRepository.create({...createUserDto});
+    
+    return (await this.userRepository.save(user)).toResponse();
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+  async update(userId: string, updateUserDto: UpdateUserDto) {
     if (!validate(userId) || version(userId) !== 4) {
       throw new BadRequestException('This id is invalid');
     }
@@ -59,7 +58,7 @@ export class UsersService {
 
     user.password = updateUserDto.newPassword;
 
-    return await this.userRepository.save(user);
+    return (await this.userRepository.save(user)).toResponse();
   }
 
   async remove(userId: string) {

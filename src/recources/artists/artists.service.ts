@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,12 +11,13 @@ import { ArtistEntity } from './entities/artist.entity';
 import { validate, version } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class ArtistsService {
   constructor(
-      @InjectRepository(ArtistEntity)
-      private artistRepository: Repository<ArtistEntity>
+    @InjectRepository(ArtistEntity)
+    private artistRepository: Repository<ArtistEntity>
   ) {}
 
   async findAll(): Promise<ArtistEntity[]> {
@@ -68,5 +71,13 @@ export class ArtistsService {
     if (!deleteResponse.affected) {
       throw new NotFoundException('Artist not found');
     }
+  }
+
+  async checkArtist(artistId: string) {
+    const artist = await this.artistRepository.findOne( { where: { id: artistId } });
+    if (!artist) {
+      return false;
+    }
+    return true;
   }
 }
