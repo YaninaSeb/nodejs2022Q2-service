@@ -9,6 +9,7 @@ import { UsersModule } from './recources/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configService from './ormconfig';
+import { AuthModule } from './recources/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import configService from './ormconfig';
     ArtistsModule,
     TracksModule,
     AlbumsModule,
-    FavoritesModule
+    FavoritesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
