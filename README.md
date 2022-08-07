@@ -11,7 +11,7 @@ git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
 Switch to  branch 
 
 ```
-typeorm
+authentication
 ```
 
 ## Start app with Docker
@@ -33,8 +33,10 @@ npm run docker:scan:db
 
 ## Testing
 
+To run all test with authorization
+
 ```
-docker container exec docker-app npm run test
+docker container exec docker-app npm run test:auth
 ```
 
 
