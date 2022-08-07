@@ -4,12 +4,13 @@ import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/auth-login.dto';
 import { SignupDto } from './dto/auth-signup.dto';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private usersService: UsersService,
     private jwtService: JwtService
   ) {}
 
@@ -28,13 +29,8 @@ export class AuthService {
   }
 
 
-  async signup(signupDto: SignupDto) {
-    const password = await bcrypt.hash(
-      signupDto.password,
-      process.env.CRYPT_SALT
-    );
-
-    return await this.usersService.create({ ...signupDto, password });
+  async signup(user: CreateUserDto) {
+    return this.usersService.create(user);
   }
 
 
@@ -47,13 +43,6 @@ export class AuthService {
         secret: process.env.JWT_SECRET_REFRESH_KEY,
         expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
       }),
-    }; 
-  }
-
-
-  async refresh(refreshToken) {
-    return 'This action adds a new auth';
-  }
-
-  
+    };
+  } 
 }

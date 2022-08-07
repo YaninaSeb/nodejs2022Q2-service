@@ -12,6 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from '../auth/public-decorator';
 
 @Controller('user')
 export class UsersController {
@@ -29,6 +30,7 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
+  @Public()
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto) {

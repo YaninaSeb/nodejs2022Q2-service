@@ -10,13 +10,19 @@ import { validate, version } from 'uuid';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private userRepository: Repository<UserEntity>
   ) {}
+
+  async hashPassword(password: string) {
+    console.log('process.env.CRYPT_SALT', process.env.CRYPT_SALT)
+    return bcrypt.hash(password, process.env.CRYPT_SALT)
+  }
 
   async findAll(): Promise<UserEntity[]> {
     return await this.userRepository.find();
@@ -36,10 +42,23 @@ export class UsersService {
     return user;
   }
 
+  async findOneByLogin(login: string) {
+    const user = await this.userRepository.findOneBy({ login });
+
+    if(!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
   async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create({...createUserDto});
+    const user = {...createUserDto};
+    user.password = await this.hashPassword(user.password);
+
+    const newUser = this.userRepository.create(user);
     
-    return (await this.userRepository.save(user)).toResponse();
+    return (await this.userRepository.save(newUser)).toResponse();
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto) {
@@ -52,11 +71,15 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (user.password !== updateUserDto.oldPassword) {
+    const isMatch = await bcrypt.compare(
+      updateUserDto.oldPassword, 
+      user.password
+    )
+    if (!isMatch) {
       throw new ForbiddenException('oldPassword is wrong');
     }
 
-    user.password = updateUserDto.newPassword;
+    user.password = await this.hashPassword(updateUserDto.newPassword);
 
     return (await this.userRepository.save(user)).toResponse();
   }
