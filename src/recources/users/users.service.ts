@@ -20,8 +20,7 @@ export class UsersService {
   ) {}
 
   async hashPassword(password: string) {
-    console.log('process.env.CRYPT_SALT', process.env.CRYPT_SALT)
-    return bcrypt.hash(password, process.env.CRYPT_SALT)
+    return bcrypt.hash(password, 10)
   }
 
   async findAll(): Promise<UserEntity[]> {
