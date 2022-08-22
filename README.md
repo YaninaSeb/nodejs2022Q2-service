@@ -1,48 +1,59 @@
-# REST service: Containerization, Docker
+# REST service
 
-## Install
+### ***Учебный проект из курса [The Rolling Scopes School  NodeJS](https://rs.school/nodejs/)***  
+***Выполнен:  июль 2022***  
 
-Clone  repository
-
-```
-git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
-```
-
-Switch to  branch 
-
-```
-authentication
-```
-
-## Start app with Docker
-
-```
-npm run docker
-```
+## Описание проекта
+Сервер для работы с определенными ресурсами, используемый базу данных   
+[Ссылка на задание. Часть 1](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md)   
+[Ссылка на задание. Часть 2](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/containerization/assignment.md)   
+[Ссылка на задание. Часть 3](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/database-orm/score.md)   
+[Ссылка на задание. Часть 4](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/authentication/assignment.md)   
 
 
-## Scanning images
+## Инструкция по установке и запуску
+Клонировать репозиторий
 
-```
-npm run docker:scan:app
-```
-```
-npm run docker:scan:db
-```
+   ```git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git```   
+
+Перейти на ветку в соответствии с частью задания
+
+   ```git checkout develop```   
+
+   ```git checkout containerization```   
+
+   ```git checkout typeorm```   
+
+   ```git checkout authentication```   
+
+Установить зависимости   
+
+   ```npm install```   
+
+Запустить     
+
+   ```npm run start:dev``` 
+   
+Если предполагается использование Docker, запустить следующим образом
+
+   ```npm run docker``` 
 
 
-## Testing
+## Прохождение тестов
 
-To run all test with authorization
+При локальном запуске приложения   
 
-```
-docker container exec docker-app npm run test:auth
-```
+    npm run test   
+
+При запуске приложения через Docker   
+
+    docker container exec docker-app npm run test   
+
+При локальном запуске приложения с подключенной авторизацией   
+
+    docker container exec docker-app npm run test:auth   
 
 
 
-### Application starts on port 4000 by default 
-
-
-### After starting the app you can open in your browser OpenAPI documentation by typing ```http://localhost:4000/doc/```
+## После запуска приложения на порту (4000 по умолчанию) вы можете открыть в своем браузере документацию OpenAPI на ```http://localhost:4000/doc/```
 
