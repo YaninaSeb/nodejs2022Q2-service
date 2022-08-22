@@ -1,72 +1,48 @@
-# Home Library Service
+# REST service: Containerization, Docker
 
-## Prerequisites
+## Install
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
-
-## Downloading
+Clone  repository
 
 ```
-git clone {repository URL}
+git clone https://github.com/YaninaSeb/nodejs2022Q2-service.git
 ```
 
-## Installing NPM modules
+Switch to  branch 
 
 ```
-npm install
+authentication
 ```
 
-## Running application
+## Start app with Docker
 
 ```
-npm start
+npm run docker
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Scanning images
+
+```
+npm run docker:scan:app
+```
+```
+npm run docker:scan:db
+```
+
 
 ## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
 
 To run all test with authorization
 
 ```
-npm run test:auth
+docker container exec docker-app npm run test:auth
 ```
 
-To run only specific test suite with authorization
 
-```
-npm run test:auth -- <path to suite>
-```
 
-### Auto-fix and format
+### Application starts on port 4000 by default 
 
-```
-npm run lint
-```
 
-```
-npm run format
-```
+### After starting the app you can open in your browser OpenAPI documentation by typing ```http://localhost:4000/doc/```
 
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging

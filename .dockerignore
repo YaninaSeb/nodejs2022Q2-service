@@ -1,0 +1,17 @@
+.git
+.github
+.vscode
+.gitignore
+.prettierrc
+.eslintrc.json
+
+database
+dist
+node_modules
+npm-debug.log
+docker-compose.yml
+Dockerfile
+postgress_db
+logs_app
+
+README.md
