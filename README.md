@@ -4,7 +4,8 @@
 ***Выполнен:  июль 2022***  
 
 ## Описание проекта
-Сервер для работы с определенными ресурсами, используемый базу данных   
+Сервер для работы с определенными ресурсами, который использует базу данных.   
+Пользователь может создавать, читать, обновлять и удалять данные Artists, Tracks и Albums, добавлять их в Favorites.  
 [Ссылка на задание. Часть 1](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md)   
 [Ссылка на задание. Часть 2](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/containerization/assignment.md)   
 [Ссылка на задание. Часть 3](https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/database-orm/score.md)   
